@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Processing Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .error { color: red; }
+        select { width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>Email Processing Results</h1>
+    {% if error %}
+        <p class="error">Error: {{ error }}</p>
+    {% endif %}
+    {% if results %}
+        <table>
+            <tr>
+                <th>Filename</th>
+                <th>Subject</th>
+                <th>From</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Confidence</th>
+                <th>Duplicate</th>
+                <th>Attachments</th>
+                <th>Correct</th>
+            </tr>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.filename }}</td>
+                <td>{{ result.subject }}</td>
+                <td>{{ result.from }}</td>
+                <td>{{ result.category }}</td>
+                <td>{{ result.subcategory }}</td>
+                <td>{{ result.confidence }}</td>
+                <td>{{ result.is_duplicate }}</td>
+                <td>{{ result.attachments|join(', ') if result.attachments else 'None' }}</td>
+                <td>
+                    <form action="/submit_feedback" method="POST">
+                        <input type="hidden" name="text" value="{{ result.text }}">
+                        <select name="category" onchange="updateSubcategories(this)">
+                            {% for cat in categories.keys() %}
+                                <option value="{{ cat }}" {% if cat == result.category %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="subcategory" class="subcategory-select">
+                            {% for subcat in categories[result.category] %}
+                                <option value="{{ subcat }}" {% if subcat == result.subcategory %}selected{% endif %}>{{ subcat }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Submit Feedback">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No results to display.</p>
+    {% endif %}
+    <p><a href="/">Back to Home</a></p>
+
+    <script>
+        const categories = {{ categories|tojson }};
+        function updateSubcategories(categorySelect) {
+            const subcatSelect = categorySelect.nextElementSibling;
+            const selectedCategory = categorySelect.value;
+            const subcategories = categories[selectedCategory];
+            subcatSelect.innerHTML = subcategories.map(subcat => 
+                `<option value="${subcat}">${subcat}</option>`
+            ).join('');
+        }
+    </script>
+</body>
+</html>
