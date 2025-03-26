@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Processor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-container { max-width: 600px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Email Processor</h1>
+        <form action="/process_folder" method="POST">
+            <label for="folder_path">Enter Email Folder Path:</label><br>
+            <input type="text" id="folder_path" name="folder_path" size="50" placeholder="e.g., E:\emails"><br><br>
+            <input type="submit" value="Process Emails">
+        </form>
+    </div>
+</body>
+</html>

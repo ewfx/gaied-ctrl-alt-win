@@ -1,0 +1,3 @@
+Subject: Payment issue
+From: user2@example.com
+Content: I have a problem with my payment.
